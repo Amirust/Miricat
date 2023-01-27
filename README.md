@@ -1,2 +1,1 @@
-# Miricat
-Miricat Chat Protocol RFC
+# Miricat Chat Protocol (MCP)
