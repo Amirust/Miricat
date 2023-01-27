@@ -267,19 +267,20 @@ TCP
 ```
 Handshake:               0, {"publicKey": "public key"}
 Accepted:                1, {"http": "HTTP Address:port or domain, if HTTP is enabled"}
-UserPasswordRequired:    2, "User password required"
-UserPasswordIncorrect:   3, "User password incorrect"
-AlreadyConnected:        4, "User with this nickname or ip address already connected"
-UserNotFound:            5, "User not found"
-UserMessage:             6, {"user": "username", "message": "message text"}
-UserAdd:                 7, {"user": "username", "allUsers": ["user1", "user2", "user3"]}
-UserRemove:              8, {"user": "username"}
-AuthDataInvalid:         9, "Exception: AUTH: No username / Exception: AUTH: No public key"
-MessageDataInvalid:      10, "Exception: USER_MESSAGE: No message"
-UpdateAccessToken:       11, {"accessToken": "access token"}
-UserNotRegistered:       12, "User not registered"
-HandshakeRequired:       13, "Handshake required",
-HandshakeDataInvalid:    14, "Handshake data invalid"
+AuthRequired:            2, "Auth required"
+UserPasswordRequired:    3, "User password required"
+UserPasswordIncorrect:   4, "User password incorrect"
+AlreadyConnected:        5, "User with this nickname or ip address already connected"
+UserNotFound:            6, "User not found"
+UserMessage:             7, {"user": "username", "message": "message text"}
+UserAdd:                 8, {"user": "username", "allUsers": ["user1", "user2", "user3"]}
+UserRemove:              9, {"user": "username"}
+AuthDataInvalid:         10, "Exception: AUTH: No username / Exception: AUTH: No public key"
+MessageDataInvalid:      11, "Exception: USER_MESSAGE: No message"
+UpdateAccessToken:       12, {"accessToken": "access token"}
+UserNotRegistered:       13, "User not registered"
+HandshakeRequired:       14, "Handshake required",
+HandshakeDataInvalid:    15, "Handshake data invalid"
 ```
 
 ## Future plans
