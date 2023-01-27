@@ -278,6 +278,8 @@ AuthDataInvalid:         9, "Exception: AUTH: No username / Exception: AUTH: No 
 MessageDataInvalid:      10, "Exception: USER_MESSAGE: No message"
 UpdateAccessToken:       11, {"accessToken": "access token"}
 UserNotRegistered:       12, "User not registered"
+HandshakeRequired:       13, "Handshake required",
+HandshakeDataInvalid:    14, "Handshake data invalid"
 ```
 
 ## Future plans
