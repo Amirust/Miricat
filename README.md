@@ -91,7 +91,7 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      |  RoomAlreadyExists   | Room already exists               |
 |     Error      |  RoomDataIncorrect   | Room data is invalid              |
 |     Error      |    RoomDontExists    | Room dont exists                  |
-|     Error      |     AccessDenied     | User dont joined to room          |
+|     Error      |     AccessDenied     | Access Denied                     |
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
