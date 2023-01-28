@@ -206,6 +206,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Authentication.Accepted",
    "data": {
+      "http": "HTTP server address or domain",
       "rooms": [{
          "id": "Room id",
          "name": "Room name",
