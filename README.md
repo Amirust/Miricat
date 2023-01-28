@@ -84,6 +84,7 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      | UserPasswordInvalid  | User password is invalid          |
 |     Error      |     UserNotFound     | User not found                    |
 |     Error      |  UserAlreadyExists   | User already exists               |
+|     Error      | PacketDataIncorrect  | Packet data is invalid            |
 |     Error      |  AuthDataIncorrect   | Auth data is invalid              |
 |     Error      | MessageDataIncorrect | Message data is invalid           |
 |     Error      |  UserDontConnected   | If user dont connected to room    |
