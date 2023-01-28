@@ -1,4 +1,5 @@
 # Miricat Chat Protocol (MCP)
+### Version 2.0.0
 
 ## About
 MCP is a protocol for chat applications. This protocol uses AES-256-CTR encryption to secure the connection between the client and the server. The protocol is designed to be simple and easy to implement. The protocol is designed to be used with TCP sockets and HTTP for avatars, images and registration.
@@ -7,158 +8,397 @@ MCP is a protocol for chat applications. This protocol uses AES-256-CTR encrypti
 - The protocol is designed to be used with TCP sockets and HTTP. HTTP is optional, but recommended.
 - MCP uses password for login to TCP chat server. For access to HTTP server, MCP uses token what's updated every 10 minutes. Token sends to client after login to TCP server, read Events for dital information.
 - MCP uses AES-256-CTR and Diffie-Hellman key exchange for encryption. Read Encryption for dital information.
-- MCP uses JSON for transfer data between client and server. Read Messages for dital information.
+- MCP uses JSON for transfer data between client and server. Read Packages for dital information.
 - ALL data is encrypted, except public key exchange (Read connection). Read Encryption for dital information.
+- MCP uses rooms for chat. Read Rooms for dital information.
+- All MCP packages in TCP is strictly standardized. Read Packages for dital information.
+- If user not joined to room, server doesn't send room messages to socket
 
 ## Content
-1. Protocol (TCP)
-   1. Connection
+1. Packages
+   1. Types
+   2. Objects
+2. Protocol (TCP)
+   1. Handshake
    2. Authentication
    3. Messages
-   4. Events
-2. Protocol (HTTP)
+   4. Rooms
+3. Protocol (HTTP)
    1. Registration
    2. Avatars
    3. Images
-3. Authentication
+4. Authentication
    1. Token (HTTP)
-4. Encryption
+5. Encryption
    1. Diffie-Hellman
    2. AES-256-CTR
    3. MCP Key
-5. Client Requests
-   1. TCP
-6. Server Responses
-   1. TCP
-7. Features
-   1. Disable Registration
-## Protocol (TCP)
-### Connection
-Send JSON to server after TCP socket connection created. <br><br>
-**CLIENT REQUEST**
-```json
+6. Versions
+
+## Packages
+Package is a JSON object with type and data fields. This is strictly standardized.
+```json5
 {
-  "type": 0,
-  "data": {
-    "publicKey": "Diffie-Hellman public key in HEX encoding"
-  }
-}
-```
-**SERVER RESPONSE**
-```json
-{
-  "type": 0,
-  "data": {
-    "publicKey": "Diffie-Hellman public key in HEX encoding"
-  }
-}
-```
-After this compute shared key and create MCP key for encryption (Read Encryption) <br>
-### Authentication
-If shared key is computed, send JSON to server with login and password. <br>
-```json
-{
-  "type": 1,
-  "data": {
-    "login": "user login",
-    "password": "user password, only if registration is enabled"
-  }
-}
-```
-If all is ok, server return this
-```json
-{
-   "type": 1,
+   // Example: Handshake.Handshake or Authentication.Login, read Types for dital information
+   "type": "MajorType.MinorType",
    "data": {
-      "http": "HTTP Address:port or domain, if HTTP is enabled"
+      // Package object data, read Objects, Client Requests or Server Responses for dital information
    }
 }
 ```
-If password is incorrect, server return this
-```json
+For Message types you need to specify the room. This is strictly standardized.
+```json5
 {
-   "type": "2-3, type 2 if first data, type 3 if second data",
-   "data": "User password required / User password incorrect"
-}
-```
-If login is incorrect, server return this ONLY IF REGISTRATION IS ENABLED
-```json
-{
-   "type": 4,
-   "data": "User not registered"
-}
-```
-If auth data is incorrect, server return this
-```json
-{
-   "type": 2,
-   "data": "Exception: AUTH: No username / Exception: AUTH: No public key"
-}
-```
-If from you IP address connected more than 1 user, server return this
-```json
-{
-   "type": 4,
-   "data": "User with this nickname or ip address already connected"
-}
-``` 
-### Messages
-After authentication, you can send messages to server. <br>
-```json
-{
-   "type": 2,
+    // Example: Message.CreateTextMessage
+   "type": "MajorType.MinorType",
    "data": {
-      "message": "Message text"
-   }
+      // Package object data, read Objects, Client Requests or Server Responses for dital information
+   },
+   "room": "Room id"
 }
 ```
-If message is empty, server return this
-```json
+### Types
+|   MajorType    |      MinorType       | Description                       |
+|:--------------:|:--------------------:|-----------------------------------|
+|   Handshake    |      Handshake       | Handshake                         |
+| Authentication |        Login         | Login                             |
+| Authentication |       Accepted       | Server accepted you connection    |
+| Authentication |  UpdateAccessToken   | Update MCP Access Token           |
+|    Message     |  CreateTextMessage   | Create text message               |
+|    Message     |     TextMessage      | Text message                      |
+|    Message     |  CreateImageMessage  | Create image message              |
+|    Message     |     ImageMessage     | Image message                     |
+|      Room      |        Create        | Create room ONLY FOR ROOT         |
+|      Room      |       Created        | Room created                      |
+|      Room      |         Join         | Join room                         |
+|      Room      |        Joined        | User joined to room               |
+|      Room      |        Leave         | Leave room                        |
+|      Room      |         Left         | User left room                    |
+|      Room      |        Delete        | Delete room ONLY FOR ROOT         |
+|      Room      |       Deleted        | Room deleted                      |
+|      Room      |        Update        | Update room ONLY FOR ROOT         |
+|      Room      |       Updated        | Room updated                      |
+|      Room      |     RequireList      | Require the room list from server |
+|      Room      |         List         | List rooms                        |
+|     Error      | UserPasswordRequired | You need to specify user password |
+|     Error      | UserPasswordInvalid  | User password is invalid          |
+|     Error      |     UserNotFound     | User not found                    |
+|     Error      |  UserAlreadyExists   | User already exists               |
+|     Error      |  AuthDataIncorrect   | Auth data is invalid              |
+|     Error      | MessageDataIncorrect | Message data is invalid           |
+|     Error      |  UserDontConnected   | If user dont connected to room    |
+|     Error      |     RoomNotFound     | Room not found                    |
+|     Error      |  RoomAlreadyExists   | Room already exists               |
+|     Error      |  RoomDataIncorrect   | Room data is invalid              |
+|     Error      |    RoomDontExists    | Room dont exists                  |
+|     Error      |     AccessDenied     | User dont joined to room          |
+
+### Objects
+Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
+#### Client
+##### Handshake
+```json5
 {
-   "type": 10,
-   "data": "Exception: USER_MESSAGE: No message"
+   "type": "Handshake.Handshake",
+   "data": {
+      "version": "MCP version", // Read Versions
+      "publicKey": "Public key for Diffie-Hellman key exchange"
+   }
 }
 ```
 
-### Events
-After connection of new user, server broadcast this event to all users
-```json
+##### Authentication.Login
+```json5
 {
-   "type": 7,
+   "type": "Authentication.Login",
    "data": {
-      "user": "username",
-      "allUsers": ["user1", "user2", "user3"]
+      "username": "Username",
+      "password": "Password"
    }
 }
 ```
-After disconnect, server broadcast this event to all users
-```json
+##### Message.CreateTextMessage
+```json5
 {
-   "type": 8,
+   "type": "Message.CreateTextMessage",
    "data": {
-      "user": "username"
+      "text": "Text message"
+   },
+    "room": "Room id"
+}
+```
+##### Message.CreateImageMessage
+```json5
+{
+   "type": "Message.CreateImageMessage",
+   "data": {
+      "image": "Image URL, read HTTP Images for dital information"
+   },
+   "room": "Room id"
+}
+```
+##### Room.Create
+```json5
+{
+   "type": "Room.Create",
+   "data": {
+      "name": "Room name"
    }
 }
 ```
-If user sends message, server broadcast this event to all users
-```json
+##### Room.Join
+```json5
 {
-   "type": 6,
+   "type": "Room.Join",
    "data": {
-      "user": "username",
-      "message": "message text"
+      "room": "Room id"
    }
 }
 ```
-Every 10 minutes server send the message for you client with new access token
-```json
+##### Room.Leave
+```json5
 {
-   "type": 11,
+   "type": "Room.Leave",
    "data": {
-      "accessToken": "token"
+      "room": "Room id"
    }
 }
 ```
+##### Room.Delete
+```json5
+{
+   "type": "Room.Delete",
+   "data": {
+      "room": "Room id"
+   }
+}
+```
+##### Room.Update
+```json5
+{
+   "type": "Room.Update",
+   "data": {
+      "room": "Room id",
+      "name": "Room name"
+   }
+}
+```
+##### Room.RequireList
+```json5
+{
+   "type": "Room.RequireList"
+}
+```
+#### Server
+##### Handshake
+```json5
+{
+   "type": "Handshake.Handshake",
+   "data": {
+      "version": "MCP version", // Read Versions
+      "publicKey": "Public key for Diffie-Hellman key exchange"
+   }
+}
+```
+#### Authentication.Accepted
+```json5
+{
+   "type": "Authentication.Accepted",
+   "data": {
+      "rooms": [{
+         "id": "Room id",
+         "name": "Room name",
+         "allUsers": ["Username", "Username", "Username"]
+      }]
+   }
+}
+```
+#### Authentication.UpdateAccessToken
+```json5
+{
+   "type": "Authentication.UpdateAccessToken",
+   "data": {
+      "accessToken": "MCP Access Token"
+   }
+}
+```
+##### Message.TextMessage
+```json5
+{
+   "type": "Message.TextMessage",
+   "data": {
+      "text": "Text message",
+      "user": "Username",
+      "time": "Message timestamp"
+   },
+   "room": "Room id"
+}
+```
+##### Message.ImageMessage
+```json5
+{
+   "type": "Message.ImageMessage",
+   "data": {
+      "image": "url",
+      "user": "Username",
+      "time": "Message timestamp"
+   }
+}
+```
+##### Room.Created
+```json5
+{
+   "type": "Room.Created",
+   "data": {
+      "room": "Room id",
+      "name": "Room name"
+   }
+}
+```
+##### Room.Joined
+```json5
+{
+   "type": "Room.Joined",
+   "data": {
+      "room": "Room id",
+      "user": "Username",
+      "allUsers": ["Username", "Username", "Username"]
+   }
+}
+```
+##### Room.Left
+```json5
+{
+   "type": "Room.Left",
+  "data": {
+     "room": "Room id",
+     "user": "Username"
+  }
+}
+```
+##### Room.Deleted
+```json5
+{
+   "type": "Room.Deleted",
+   "data": {
+      "room": "Room id"
+   }
+}
+```
+##### Room.Updated
+```json5
+{
+   "type": "Room.Updated",
+   "data": {
+      "room": "Room id",
+      "name": "Room name"
+   }
+}
+```
+##### Room.List
+```json5
+{
+   "type": "Room.List",
+   "data": [
+      {
+         "room": "Room id",
+         "name": "Room name"
+      }
+   ]
+}
+```
+##### Error
+```json5
+{
+   "type": "Error.MinorType",
+   "data": {
+      "message": "Error message"
+   }
+}
+```
+
+## Protocol (TCP)
+### Handshake
+1. Client sends Handshake.Handshake with Handshake object
+2. Server sends Handshake.Handshake with Handshake object
+3. After this compute the shared key, after this encrypt all messages (Read Encryption)
+
+### Authentication
+After handshake
+1. Client sends Authentication.Login with Login object
+2. Server sends Authentication.Accepted with Accepted object
+3. After this client can send any message
+
+If user data is invalid:
+1. Server sends Error.AuthDataInvalid with Error object
+
+### Messages
+After authentication
+1. Client sends Message.CreateTextMessage with CreateTextMessage object
+2. Server sends Message.TextMessage with TextMessage object
+
+If you want to send image:
+1. Upload image to HTTP server and get URL (or upload image to any host and get direct URL)
+2. Client sends Message.CreateImageMessage with CreateImageMessage object
+3. Server sends Message.ImageMessage with ImageMessage object
+
+If your client is CLI, you can not implement image sending/receiving, because how :trl:
+If message is invalid:
+1. Server sends Error.MessageInvalid with Error object
+
+If room don't exist:
+1. Server sends Error.RoomDontExists with Error object
+
+### Rooms
+After authentication
+If you want to connect to room:
+1. Client sends Room.Join with Join object
+2. Server sends Room.Joined with Joined object
+3. After this client can send any message
+
+If you want to leave room:
+1. Client sends Room.Leave with Leave object
+2. Server sends Room.Left with Left object
+
+If user don't connected to room, but want to send message or leave room:
+1. Server sends Error.UserDontConnected with Error object
+
+If you want to create room:
+1. Client sends Room.Create with Create object
+2. Server sends Room.Created with Created object
+
+If you are not a root user, but want to create room:
+1. Server sends Error.AccessDenied with Error object
+
+If room name is claimed:
+1. Server sends Error.RoomAlreadyExists with Error object
+
+If you want to delete room:
+1. Client sends Room.Delete with Delete object
+2. Server sends Room.Deleted with Deleted object
+
+If you are not a root user, but want to delete room:
+1. Server sends Error.AccessDenied with Error object
+
+If room don't exist:
+1. Server sends Error.RoomDontExists with Error object
+
+If you want to update room:
+1. Client sends Room.Update with Update object
+2. Server sends Room.Updated with Updated object
+
+If you are not a root user, but want to update room:
+1. Server sends Error.AccessDenied with Error object
+
+If room don't exist:
+1. Server sends Error.RoomDontExists with Error object
+
+If you want change room name to name what's claimed:
+1. Server sends Error.RoomAlreadyExists with Error object
+
+If you want to get room list:
+1. Client sends Room.RequireList
+2. Server sends Room.List with Room.List object
 
 ## Protocol (HTTP)
 ### Registration
@@ -219,7 +459,7 @@ image: file
 ### Token (HTTP)
 MCPToken is token for access to HTTP server. <br>
 Token is generated every 10 minutes, and when server accepted you connection to TCP <br>
-Token is generated with this algorithm: <br>
+Token is generated with this algorithm (Dart example): <br>
 ```dart
 String generateAccessToken() {
  List<int> bytes = List.generate(8, (index) => Random().nextInt(256));
@@ -241,7 +481,9 @@ MCP uses 32 bytes key for encryption. This name is MCP Key <br>
 
 ### MCP Key
 MCP Key is shared key between client and server. But sliced to 32 characters. <br>
-When you compute shared key, you need to slice it to 32 characters and use for encryption. <br>
+When you compute shared key,
+1. Convert it to base64
+2. Slice it to 32 characters and use for encryption. <br>
 Node.js example:
 ```js
 const crypto = require('crypto');
@@ -250,35 +492,19 @@ diffieHellman.generateKeys();
 
 const publicKey = diffieHellman.getPublicKey('hex');
 const serverPublicKey = 'server public key';
-const sharedKey = diffieHellman.computeSecret(serverPublicKey, 'hex');
+const sharedKey = diffieHellman.computeSecret(serverPublicKey, 'hex', 'base64');
 const mcpKey = sharedKey.slice(0, 32);
 ```
 
-## Client requests
-TCP
-```
-Handshake:   0, {"publicKey": "public key"}
-Auth:        1, {"login": "user login", "password": "user password"}
-UserMessage: 2, {"message": "message text"}
-```
+## Versions
+### 1.0.0
+The first version of MCP. <br>
+Very simple, without rooms, pls don't use it.
 
-## Server responses
-TCP
-```
-Handshake:               0, {"publicKey": "public key"}
-Accepted:                1, {"http": "HTTP Address:port or domain, if HTTP is enabled"}
-UserPasswordRequired:    2, "User password required"
-UserPasswordIncorrect:   3, "User password incorrect"
-AlreadyConnected:        4, "User with this nickname or ip address already connected"
-UserNotFound:            5, "User not found"
-UserMessage:             6, {"user": "username", "message": "message text"}
-UserAdd:                 7, {"user": "username", "allUsers": ["user1", "user2", "user3"]}
-UserRemove:              8, {"user": "username"}
-AuthDataInvalid:         9, "Exception: AUTH: No username / Exception: AUTH: No public key"
-MessageDataInvalid:      10, "Exception: USER_MESSAGE: No message"
-UpdateAccessToken:       11, {"accessToken": "access token"}
-UserNotRegistered:       12, "User not registered"
-```
+### 2.0.0
+Current version of MCP. <br>
+Added rooms, but without private rooms. <br>
 
-## Future plans
-- [ ] Add rooms
+
+## Plans
+- [ ] Add private rooms
