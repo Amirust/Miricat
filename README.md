@@ -83,6 +83,7 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      | UserPasswordRequired | You need to specify user password |
 |     Error      | UserPasswordInvalid  | User password is invalid          |
 |     Error      |     UserNotFound     | User not found                    |
+|     Error      |  UnsupportedVersion  | Version not supported             |
 |     Error      |  UserAlreadyExists   | User already exists               |
 |     Error      | PacketDataIncorrect  | Packet data is invalid            |
 |     Error      |  AuthDataIncorrect   | Auth data is invalid              |
