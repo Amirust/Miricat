@@ -245,7 +245,8 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
       "image": "url",
       "user": "Username",
       "time": "Message timestamp"
-   }
+   },
+   "room": "Room id"
 }
 ```
 ##### Room.Created
