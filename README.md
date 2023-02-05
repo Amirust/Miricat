@@ -486,10 +486,10 @@ MCP uses 16 bytes IV filled by zero-bytes for all messages. <br>
 MCP uses 32 bytes key for encryption. This name is MCP Key <br>
 
 ### MCP Key
-MCP Key is shared key between client and server. But sliced to 41 characters. <br>
+MCP Key is shared key between client and server. But sliced to 43 characters. <br>
 When you compute shared key,
 1. Convert it to base64
-2. Slice it to 41 characters and use for encryption. <br>
+2. Slice it to 43 characters and use for encryption. <br>
 Node.js example:
 ```js
 const crypto = require('crypto');
@@ -499,7 +499,7 @@ diffieHellman.generateKeys();
 const publicKey = diffieHellman.getPublicKey('hex');
 const serverPublicKey = 'server public key';
 const sharedKey = diffieHellman.computeSecret(serverPublicKey, 'hex', 'base64');
-const mcpKey = sharedKey.slice(0, 41);
+const mcpKey = sharedKey.slice(0, 43);
 ```
 
 ## Versions
