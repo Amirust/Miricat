@@ -463,12 +463,14 @@ image: file
 ### Token (HTTP)
 MCPToken is token for access to HTTP server. <br>
 Token is generated every 10 minutes, and when server accepted you connection to TCP <br>
-Token is generated with this algorithm (Dart example): <br>
-```dart
-String generateAccessToken() {
- List<int> bytes = List.generate(8, (index) => Random().nextInt(256));
- accessToken = base64.encode(bytes) + base64.encode(sha1.convert(utf8.encode(username)).bytes);
- return accessToken;
+Token is generated with this algorithm (Java example): <br>
+```java
+public static String generateAccessToken(String username)
+{
+	byte[] array = new byte[8];
+	new java.util.Random().nextBytes(array);
+
+	return Base64.getEncoder().encodeToString(array) + Base64.getEncoder().encodeToString(username.getBytes());
 }
 ```
 Token is required in all HTTP requests, except registration.
@@ -484,10 +486,10 @@ MCP uses 16 bytes IV filled by zero-bytes for all messages. <br>
 MCP uses 32 bytes key for encryption. This name is MCP Key <br>
 
 ### MCP Key
-MCP Key is shared key between client and server. But sliced to 32 characters. <br>
+MCP Key is shared key between client and server. But sliced to 41 characters. <br>
 When you compute shared key,
 1. Convert it to base64
-2. Slice it to 32 characters and use for encryption. <br>
+2. Slice it to 41 characters and use for encryption. <br>
 Node.js example:
 ```js
 const crypto = require('crypto');
@@ -497,7 +499,7 @@ diffieHellman.generateKeys();
 const publicKey = diffieHellman.getPublicKey('hex');
 const serverPublicKey = 'server public key';
 const sharedKey = diffieHellman.computeSecret(serverPublicKey, 'hex', 'base64');
-const mcpKey = sharedKey.slice(0, 32);
+const mcpKey = sharedKey.slice(0, 41);
 ```
 
 ## Versions
