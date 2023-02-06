@@ -54,53 +54,57 @@ For Message types you need to specify the room. This is strictly standardized.
 }
 ```
 ### Types
-|   MajorType    |      MinorType       | Description                       |
-|:--------------:|:--------------------:|-----------------------------------|
-|   Handshake    |      Handshake       | Handshake                         |
-|   Heartbeat    |         Ping         | Ping                              |
-| Authentication |        Login         | Login                             |
-| Authentication |       Register       | Registration                      |
-| Authentication |       Accepted       | Server accepted you connection    |
-|    Message     |  CreateTextMessage   | Create text message               |
-|    Message     |     TextMessage      | Text message                      |
-|    Message     |  CreateImageMessage  | Create image message              |
-|    Message     |     ImageMessage     | Image message                     |
-|      File      |  RequestImageUpload  | Request the image uploading       |
-|      File      | ImageUploadAccepted  | Server accepted upload            |
-|      File      | ImageUploadRejected  | Server rejected upload            |
-|      File      |   ImageUploadPart    | Image part                        |
-|      File      | ImageUploadCompleted | Image upload completed            |
-|      User      |        Create        | Create user ONLY FOR ROOT         |
-|      User      |       Created        | User created                      |
-|      User      |        Delete        | Delete user ONLY FOR ROOT         |
-|      User      |       Deleted        | User deleted                      |
-|      Room      |        Create        | Create room ONLY FOR ROOT         |
-|      Room      |       Created        | Room created                      |
-|      Room      |         Join         | Join room                         |
-|      Room      |        Joined        | User joined to room               |
-|      Room      |        Leave         | Leave room                        |
-|      Room      |         Left         | User left room                    |
-|      Room      |        Delete        | Delete room ONLY FOR ROOT         |
-|      Room      |       Deleted        | Room deleted                      |
-|      Room      |        Update        | Update room ONLY FOR ROOT         |
-|      Room      |       Updated        | Room updated                      |
-|      Room      |     RequireList      | Require the room list from server |
-|      Room      |         List         | List rooms                        |
-|     Error      | UserPasswordRequired | You need to specify user password |
-|     Error      | UserPasswordInvalid  | User password is invalid          |
-|     Error      |     UserNotFound     | User not found                    |
-|     Error      |  UnsupportedVersion  | Version not supported             |
-|     Error      |  UserAlreadyExists   | User already exists               |
-|     Error      | PacketDataIncorrect  | Packet data is invalid            |
-|     Error      |  AuthDataIncorrect   | Auth data is invalid              |
-|     Error      | MessageDataIncorrect | Message data is invalid           |
-|     Error      |  UserDontConnected   | If user dont connected to room    |
-|     Error      |     RoomNotFound     | Room not found                    |
-|     Error      |  RoomAlreadyExists   | Room already exists               |
-|     Error      |  RoomDataIncorrect   | Room data is invalid              |
-|     Error      |    RoomDontExists    | Room dont exists                  |
-|     Error      |     AccessDenied     | Access Denied                     |
-|     Error      |   HeartbeatTimeout   | HeartbeatTimeout                  |
+|   MajorType    |       MinorType        | Description                       |
+|:--------------:|:----------------------:|-----------------------------------|
+|   Handshake    |       Handshake        | Handshake                         |
+|   Heartbeat    |          Ping          | Ping                              |
+| Authentication |         Login          | Login                             |
+| Authentication |        Register        | Registration                      |
+| Authentication |        Accepted        | Server accepted you connection    |
+|    Message     |   CreateTextMessage    | Create text message               |
+|    Message     |      TextMessage       | Text message                      |
+|    Message     |   CreateImageMessage   | Create image message              |
+|    Message     |      ImageMessage      | Image message                     |
+|      File      |   RequestImageUpload   | Request the image uploading       |
+|      File      |  ImageUploadAccepted   | Server accepted upload            |
+|      File      |  ImageUploadRejected   | Server rejected upload            |
+|      File      |    ImageUploadPart     | Image part                        |
+|      File      |  ImageUploadCompleted  | Image upload completed            |
+|      File      |  RequestImageDownload  | Request the image downloading     |
+|      File      |   ImageDownloadMeta    | Meta of image                     |
+|      File      |   ImageDownloadPart    | Image part                        |
+|      File      | ImageDownloadCompleted | Image download completed          |
+|      User      |         Create         | Create user ONLY FOR ROOT         |
+|      User      |        Created         | User created                      |
+|      User      |         Delete         | Delete user ONLY FOR ROOT         |
+|      User      |        Deleted         | User deleted                      |
+|      Room      |         Create         | Create room ONLY FOR ROOT         |
+|      Room      |        Created         | Room created                      |
+|      Room      |          Join          | Join room                         |
+|      Room      |         Joined         | User joined to room               |
+|      Room      |         Leave          | Leave room                        |
+|      Room      |          Left          | User left room                    |
+|      Room      |         Delete         | Delete room ONLY FOR ROOT         |
+|      Room      |        Deleted         | Room deleted                      |
+|      Room      |         Update         | Update room ONLY FOR ROOT         |
+|      Room      |        Updated         | Room updated                      |
+|      Room      |      RequireList       | Require the room list from server |
+|      Room      |          List          | List rooms                        |
+|     Error      |  UserPasswordRequired  | You need to specify user password |
+|     Error      |  UserPasswordInvalid   | User password is invalid          |
+|     Error      |      UserNotFound      | User not found                    |
+|     Error      |   UnsupportedVersion   | Version not supported             |
+|     Error      |   UserAlreadyExists    | User already exists               |
+|     Error      |  PacketDataIncorrect   | Packet data is invalid            |
+|     Error      |   AuthDataIncorrect    | Auth data is invalid              |
+|     Error      |  MessageDataIncorrect  | Message data is invalid           |
+|     Error      |   UserDontConnected    | If user dont connected to room    |
+|     Error      |      RoomNotFound      | Room not found                    |
+|     Error      |   RoomAlreadyExists    | Room already exists               |
+|     Error      |   RoomDataIncorrect    | Room data is invalid              |
+|     Error      |     RoomDontExists     | Room dont exists                  |
+|     Error      |      AccessDenied      | Access Denied                     |
+|     Error      |    HeartbeatTimeout    | HeartbeatTimeout                  |
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
@@ -197,6 +201,15 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ```json5
 {
    "type": "File.ImageUploadCompleted",
+   "data": {
+      "id": "Image id",
+   }
+}
+```
+##### File.RequestImageDownload
+```json5
+{
+   "type": "File.RequestImageDownload",
    "data": {
       "id": "Image id",
    }
@@ -325,12 +338,35 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "room": 1 // Room id
 }
 ```
-##### File.ImageUploadAccepted
+##### File.ImageDownloadMeta
 ```json5
 {
-   "type": "File.ImageUploadAccepted",
+   "type": "File.ImageDownloadMeta",
    "data": {
-      "id": "Image id"
+      "id": "Image id",
+      "name": "Image name",
+      "size": 123456789, // Image size in bytes
+      "type": "Image type", // Mime type
+   }
+}
+```
+##### File.ImageDownloadPart
+```json5
+{
+   "type": "File.ImageUploadPart",
+   "data": {
+      "id": "Image id",
+      "part": 1, // Part number
+      "data": "Base64 encoded image part"
+   }
+}
+```
+##### File.ImageDownloadCompleted
+```json5
+{
+   "type": "File.ImageUploadCompleted",
+   "data": {
+      "id": "Image id",
    }
 }
 ```
@@ -339,6 +375,18 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "File.ImageUploadRejected",
    "data": null
+}
+```
+##### File.ImageDownloadAccepted
+```json5
+{
+   "type": "File.ImageDownloadAccepted",
+   "data": {
+      "id": "Image id",
+      "name": "Image name",
+      "size": 123456789, // Image size in bytes
+      "type": "Image type", // Mime type
+   }
 }
 ```
 ##### User.Created
