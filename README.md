@@ -72,7 +72,9 @@ For Message types you need to specify the room. This is strictly standardized.
 |    Message     |  CreateImageMessage  | Create image message              |
 |    Message     |     ImageMessage     | Image _message                    |
 |      User      |        Create        | Create user ONLY FOR ROOT         |
+|      User      |       Created        | User created                      |
 |      User      |        Delete        | Delete user ONLY FOR ROOT         |
+|      User      |       Deleted        | User deleted                      |
 |      Room      |        Create        | Create room ONLY FOR ROOT         |
 |      Room      |       Created        | Room created                      |
 |      Room      |         Join         | Join room                         |
@@ -276,6 +278,24 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
       "time": "Message timestamp"
    },
    "room": 1 // Room id
+}
+```
+##### User.Created
+```json5
+{
+   "type": "User.Created",
+   "data": {
+      "username": "Username"
+   }
+}
+````
+##### User.Deleted
+```json5
+{
+   "type": "User.Deleted",
+   "data": {
+      "username": "Username"
+   }
 }
 ```
 ##### Room.Created
