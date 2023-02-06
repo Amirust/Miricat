@@ -97,7 +97,7 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      |  RoomDataIncorrect   | Room data is invalid              |
 |     Error      |    RoomDontExists    | Room dont exists                  |
 |     Error      |     AccessDenied     | Access Denied                     |
-|     Error      |   HeartbeatTimeout   | Unknown error                     |
+|     Error      |   HeartbeatTimeout   | HeartbeatTimeout                  |
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
