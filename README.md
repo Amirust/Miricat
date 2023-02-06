@@ -13,6 +13,7 @@ MCP is a protocol for chat applications. This protocol uses AES-256-CTR encrypti
 - MCP uses rooms for chat. Read Rooms for dital information.
 - All MCP packages in TCP is strictly standardized. Read Packages for dital information.
 - If user not joined to room, server doesn't send room messages to socket
+- MCP Uses Heartbeat for keep connection alive. Read Heartbeat for dital information.
 
 ## Content
 1. Packages
@@ -23,6 +24,7 @@ MCP is a protocol for chat applications. This protocol uses AES-256-CTR encrypti
    2. Authentication
    3. Messages
    4. Rooms
+   5. Heartbeat
 3. Protocol (HTTP)
    1. Registration
    2. Avatars
@@ -54,13 +56,14 @@ For Message types you need to specify the room. This is strictly standardized.
    "data": {
       // Package object data, read Objects, Client Requests or Server Responses for dital information
    },
-   "room": "Room id"
+   "room": 1, // Room id
 }
 ```
 ### Types
 |   MajorType    |      MinorType       | Description                       |
 |:--------------:|:--------------------:|-----------------------------------|
 |   Handshake    |      Handshake       | Handshake                         |
+|   Heartbeat    |         Ping         | Ping                              |
 | Authentication |        Login         | Login                             |
 | Authentication |       Accepted       | Server accepted you connection    |
 | Authentication |  UpdateAccessToken   | Update MCP Access Token           |
@@ -126,7 +129,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "data": {
       "text": "Text message"
    },
-    "room": "Room id"
+    "room": 1, // Room id
 }
 ```
 ##### Message.CreateImageMessage
@@ -136,7 +139,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "data": {
       "image": "Image URL, read HTTP Images for dital information"
    },
-   "room": "Room id"
+   "room": 1, // Room id
 }
 ```
 ##### Room.Create
@@ -153,7 +156,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Join",
    "data": {
-      "room": "Room id"
+      "room": 1, // Room id
    }
 }
 ```
@@ -162,7 +165,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Leave",
    "data": {
-      "room": "Room id"
+      "room": 1, // Room id
    }
 }
 ```
@@ -171,7 +174,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Delete",
    "data": {
-      "room": "Room id"
+      "room": 1, // Room id
    }
 }
 ```
@@ -180,7 +183,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Update",
    "data": {
-      "room": "Room id",
+      "room": 1, // Room id
       "name": "Room name"
    }
 }
@@ -209,10 +212,11 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "data": {
       "http": "HTTP server address or domain",
       "rooms": [{
-         "id": "Room id",
+         "id": 1, // Room id
          "name": "Room name",
          "allUsers": ["Username", "Username", "Username"]
-      }]
+      }],
+      "heartbeatRate": 30000 // Heartbeat rate in milliseconds
    }
 }
 ```
@@ -234,7 +238,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
       "user": "Username",
       "time": "Message timestamp"
    },
-   "room": "Room id"
+   "room": 1 // Room id
 }
 ```
 ##### Message.ImageMessage
@@ -246,7 +250,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
       "user": "Username",
       "time": "Message timestamp"
    },
-   "room": "Room id"
+   "room": 1 // Room id
 }
 ```
 ##### Room.Created
@@ -254,7 +258,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Created",
    "data": {
-      "room": "Room id",
+      "room": 1, // Room id
       "name": "Room name"
    }
 }
@@ -264,7 +268,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Joined",
    "data": {
-      "room": "Room id",
+      "room": 1, // Room id
       "user": "Username",
       "allUsers": ["Username", "Username", "Username"]
    }
@@ -275,7 +279,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Left",
   "data": {
-     "room": "Room id",
+     "room": 1, // Room id
      "user": "Username"
   }
 }
@@ -285,7 +289,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Deleted",
    "data": {
-      "room": "Room id"
+      "room": 1, // Room id
    }
 }
 ```
@@ -294,7 +298,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 {
    "type": "Room.Updated",
    "data": {
-      "room": "Room id",
+      "room": 1, // Room id
       "name": "Room name"
    }
 }
@@ -305,7 +309,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "type": "Room.List",
    "data": [
       {
-         "room": "Room id",
+         "room": 1, // Room id
          "name": "Room name"
       }
    ]
@@ -403,6 +407,18 @@ If you want change room name to name what's claimed:
 If you want to get room list:
 1. Client sends Room.RequireList
 2. Server sends Room.List with Room.List object
+
+### Heartbeat
+After authentication, you must send Heartbeat.
+If you don't send heartbeat, server will disconnect you.
+In Authentication.Accepted packet you can get heartbeat interval.
+To send heartbeat, you must send Heartbeat packet.
+```json5
+{
+   "type": "Heartbeat.Ping"
+}
+```
+Server will don't response to this packet.
 
 ## Protocol (HTTP)
 ### Registration
