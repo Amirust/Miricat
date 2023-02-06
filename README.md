@@ -97,6 +97,7 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      |  RoomDataIncorrect   | Room data is invalid              |
 |     Error      |    RoomDontExists    | Room dont exists                  |
 |     Error      |     AccessDenied     | Access Denied                     |
+|     Error      |   HeartbeatTimeout   | Unknown error                     |
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
@@ -419,6 +420,8 @@ To send heartbeat, you must send Heartbeat packet.
 }
 ```
 Server will don't response to this packet.
+
+If server want to disconnect you, he will send Error.HeartbeatTimeout packet.
 
 ## Protocol (HTTP)
 ### Registration
