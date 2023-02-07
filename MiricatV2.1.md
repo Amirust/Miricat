@@ -130,6 +130,11 @@ Server will respond with the same id.
 }
 ```
 
+**IMPORTANT**
+If server cannot parse the packet, ID **MUST** be DontHaveID.
+Types which don't have ID:
+- Error.HeartbeatTimeout
+
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
 #### Client
