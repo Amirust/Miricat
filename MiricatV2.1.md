@@ -14,11 +14,13 @@ MCP is a protocol for chat applications. This protocol uses AES-256-CTR encrypti
 - All MCP packages in TCP is strictly standardized. Read Packages for dital information.
 - If user not joined to room, server doesn't send room messages to socket
 - MCP Uses Heartbeat for keep connection alive. Read Heartbeat for dital information.
+- MCP Uses packet ids for reply to client. Read Packages for dital information.
 
 ## Content
 1. Packages
-    1. Types
-    2. Objects
+    1. Types 
+    2. Ids
+    3. Objects
 2. Protocol (TCP)
     1. Handshake
     2. Authentication
@@ -35,8 +37,8 @@ MCP is a protocol for chat applications. This protocol uses AES-256-CTR encrypti
 Package is a JSON object with type and data fields. This is strictly standardized.
 ```json5
 {
-   // Example: Handshake.Handshake or Authentication.Login, read Types for dital information
-   "type": "MajorType.MinorType",
+   // Example: Handshake.Handshake.ID or Authentication.Login.ID, read Types for dital information
+   "type": "MajorType.MinorType.ID",
    "data": {
       // Package object data, read Objects, Client Requests or Server Responses for dital information
    }
@@ -45,8 +47,8 @@ Package is a JSON object with type and data fields. This is strictly standardize
 For Message types you need to specify the room. This is strictly standardized.
 ```json5
 {
-    // Example: Message.CreateTextMessage
-   "type": "MajorType.MinorType",
+    // Example: Message.CreateTextMessage.ID
+   "type": "MajorType.MinorType.ID",
    "data": {
       // Package object data, read Objects, Client Requests or Server Responses for dital information
    },
@@ -106,13 +108,35 @@ For Message types you need to specify the room. This is strictly standardized.
 |     Error      |      AccessDenied      | Access Denied                     |
 |     Error      |    HeartbeatTimeout    | HeartbeatTimeout                  |
 
+### IDs
+Client generate the id for packet, this is needed for async reply to client. 
+The ID client generates self, it may be any number, string or etc., but it must be unique for each packet.
+ID is specified in the type field.
+```json5
+{
+   "type": "MajorType.MinorType.ID",
+   "data": {
+      // Package object data, read Objects, Client Requests or Server Responses for dital information
+   }
+}
+```
+Server will respond with the same id.
+```json5
+{
+   "type": "MajorType.MinorType.ID",
+   "data": {
+      // Package object data, read Objects, Client Requests or Server Responses for dital information
+   }
+}
+```
+
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
 #### Client
 ##### Handshake
 ```json5
 {
-   "type": "Handshake.Handshake",
+   "type": "Handshake.Handshake.ID",
    "data": {
       "version": "MCP version", // Read Versions
       "publicKey": "Public key for Diffie-Hellman key exchange"
@@ -123,7 +147,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Authentication.Login
 ```json5
 {
-   "type": "Authentication.Login",
+   "type": "Authentication.Login.ID",
    "data": {
       "username": "Username",
       "password": "Password"
@@ -134,7 +158,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Authentication.Register
 ```json5
 {
-   "type": "Authentication.Register",
+   "type": "Authentication.Register.ID",
    "data": {
       "username": "Username",
       "password": "Password"
@@ -145,7 +169,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Message.CreateTextMessage
 ```json5
 {
-   "type": "Message.CreateTextMessage",
+   "type": "Message.CreateTextMessage.ID",
    "data": {
       "text": "Text message"
    },
@@ -156,7 +180,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ```json5
 // If you want to send image by url
 {
-   "type": "Message.CreateImageMessage",
+   "type": "Message.CreateImageMessage.ID",
    "data": {
       "url": "Image url",
    },
@@ -167,7 +191,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ```json5
 // If you want to send image which saved on server
 {
-   "type": "Message.CreateImageMessage",
+   "type": "Message.CreateImageMessage.ID",
    "data": {
       "image": "mcp_image://image_id",
    },
@@ -178,7 +202,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.RequestImageUpload
 ```json5
 {
-   "type": "File.RequestImageUpload",
+   "type": "File.RequestImageUpload.ID",
    "data": {
       "name": "Image name",
       "size": 123456789, // Image size in bytes
@@ -189,7 +213,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageUploadPart
 ```json5
 {
-   "type": "File.ImageUploadPart",
+   "type": "File.ImageUploadPart.ID",
    "data": {
       "id": "Image id",
       "part": 1, // Part number
@@ -200,7 +224,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageUploadCompleted
 ```json5
 {
-   "type": "File.ImageUploadCompleted",
+   "type": "File.ImageUploadCompleted.ID",
    "data": {
       "id": "Image id",
    }
@@ -209,7 +233,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.RequestImageDownload
 ```json5
 {
-   "type": "File.RequestImageDownload",
+   "type": "File.RequestImageDownload.ID",
    "data": {
       "id": "Image id",
    }
@@ -219,7 +243,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 #### User.Create
 ```json5
 {
-   "type": "User.Create",
+   "type": "User.Create.ID",
    "data": {
       "username": "Username",
       "password": "Password"
@@ -230,7 +254,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 #### User.Delete
 ```json5
 {
-   "type": "User.Delete",
+   "type": "User.Delete.ID",
    "data": {
       "username": "Username"
    }
@@ -240,7 +264,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Create
 ```json5
 {
-   "type": "Room.Create",
+   "type": "Room.Create.ID",
    "data": {
       "name": "Room name"
    }
@@ -249,7 +273,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Join
 ```json5
 {
-   "type": "Room.Join",
+   "type": "Room.Join.ID",
    "data": {
       "room": 1, // Room id
    }
@@ -258,7 +282,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Leave
 ```json5
 {
-   "type": "Room.Leave",
+   "type": "Room.Leave.ID",
    "data": {
       "room": 1, // Room id
    }
@@ -267,7 +291,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Delete
 ```json5
 {
-   "type": "Room.Delete",
+   "type": "Room.Delete.ID",
    "data": {
       "room": 1, // Room id
    }
@@ -276,7 +300,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Update
 ```json5
 {
-   "type": "Room.Update",
+   "type": "Room.Update.ID",
    "data": {
       "room": 1, // Room id
       "name": "Room name"
@@ -286,14 +310,14 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.RequireList
 ```json5
 {
-   "type": "Room.RequireList"
+   "type": "Room.RequireList.ID"
 }
 ```
 #### Server
 ##### Handshake
 ```json5
 {
-   "type": "Handshake.Handshake",
+   "type": "Handshake.Handshake.ID",
    "data": {
       "version": "MCP version", // Read Versions
       "publicKey": "Public key for Diffie-Hellman key exchange"
@@ -303,7 +327,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 #### Authentication.Accepted
 ```json5
 {
-   "type": "Authentication.Accepted",
+   "type": "Authentication.Accepted.ID",
    "data": {
       "rooms": [{
          "id": 1, // Room id
@@ -317,7 +341,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Message.TextMessage
 ```json5
 {
-   "type": "Message.TextMessage",
+   "type": "Message.TextMessage.ID",
    "data": {
       "text": "Text message",
       "user": "Username",
@@ -329,7 +353,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Message.ImageMessage
 ```json5
 {
-   "type": "Message.ImageMessage",
+   "type": "Message.ImageMessage.ID",
    "data": {
       "image": "url",
       "user": "Username",
@@ -341,7 +365,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageDownloadMeta
 ```json5
 {
-   "type": "File.ImageDownloadMeta",
+   "type": "File.ImageDownloadMeta.ID",
    "data": {
       "id": "Image id",
       "name": "Image name",
@@ -353,7 +377,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageDownloadPart
 ```json5
 {
-   "type": "File.ImageUploadPart",
+   "type": "File.ImageUploadPart.ID",
    "data": {
       "id": "Image id",
       "part": 1, // Part number
@@ -364,7 +388,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageDownloadCompleted
 ```json5
 {
-   "type": "File.ImageUploadCompleted",
+   "type": "File.ImageUploadCompleted.ID",
    "data": {
       "id": "Image id",
    }
@@ -373,14 +397,14 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### File.ImageUploadRejected
 ```json5
 {
-   "type": "File.ImageUploadRejected",
+   "type": "File.ImageUploadRejected.ID",
    "data": null
 }
 ```
 ##### File.ImageDownloadAccepted
 ```json5
 {
-   "type": "File.ImageDownloadAccepted",
+   "type": "File.ImageDownloadAccepted.ID",
    "data": {
       "id": "Image id",
       "name": "Image name",
@@ -392,7 +416,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### User.Created
 ```json5
 {
-   "type": "User.Created",
+   "type": "User.Created.ID",
    "data": {
       "username": "Username"
    }
@@ -401,7 +425,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### User.Deleted
 ```json5
 {
-   "type": "User.Deleted",
+   "type": "User.Deleted.ID",
    "data": {
       "username": "Username"
    }
@@ -410,7 +434,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Created
 ```json5
 {
-   "type": "Room.Created",
+   "type": "Room.Created.ID",
    "data": {
       "room": 1, // Room id
       "name": "Room name"
@@ -420,7 +444,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Joined
 ```json5
 {
-   "type": "Room.Joined",
+   "type": "Room.Joined.ID",
    "data": {
       "room": 1, // Room id
       "user": "Username",
@@ -431,7 +455,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Left
 ```json5
 {
-   "type": "Room.Left",
+   "type": "Room.Left.ID",
   "data": {
      "room": 1, // Room id
      "user": "Username"
@@ -441,7 +465,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Deleted
 ```json5
 {
-   "type": "Room.Deleted",
+   "type": "Room.Deleted.ID",
    "data": {
       "room": 1, // Room id
    }
@@ -450,7 +474,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.Updated
 ```json5
 {
-   "type": "Room.Updated",
+   "type": "Room.Updated.ID",
    "data": {
       "room": 1, // Room id
       "name": "Room name"
@@ -460,7 +484,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Room.List
 ```json5
 {
-   "type": "Room.List",
+   "type": "Room.List.ID",
    "data": [
       {
          "room": 1, // Room id
@@ -472,7 +496,7 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ##### Error
 ```json5
 {
-   "type": "Error.MinorType",
+   "type": "Error.MinorType.ID",
    "data": {
       "message": "Error message"
    }
@@ -579,7 +603,7 @@ In Authentication.Accepted packet you can get heartbeat interval.
 To send heartbeat, you must send Heartbeat packet.
 ```json5
 {
-   "type": "Heartbeat.Ping"
+   "type": "Heartbeat.Ping.ID"
 }
 ```
 Server will don't response to this packet.
@@ -608,6 +632,7 @@ Added rooms, but without private rooms. <br>
 
 ### 2.1.0
 Removed HTTP, only TCP. <br>
+Added Ids to packets. <br>
 
 
 ## Plans
