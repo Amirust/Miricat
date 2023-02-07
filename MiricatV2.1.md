@@ -500,7 +500,7 @@ After authentication
 2. Server sends Message.TextMessage with TextMessage object
 
 If you want to send image:
-1. Upload image to HTTP server and get URL (or upload image to any host and get direct URL)
+1. Upload image to server and get URL (or upload image to any host and get direct URL)
 2. Client sends Message.CreateImageMessage with CreateImageMessage object
 3. Server sends Message.ImageMessage with ImageMessage object
 
