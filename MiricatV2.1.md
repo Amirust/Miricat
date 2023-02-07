@@ -80,6 +80,10 @@ For Message types you need to specify the room. This is strictly standardized.
 |      User      |        Created         | User created                      |
 |      User      |         Delete         | Delete user ONLY FOR ROOT         |
 |      User      |        Deleted         | User deleted                      |
+|      User      |         Update         | Update user                       |
+|      User      |        Updated         | User updated                      |
+|      User      |        GetInfo         | Get user object                   |
+|      User      |          Info          | User object                       |
 |      Room      |         Create         | Create room ONLY FOR ROOT         |
 |      Room      |        Created         | Room created                      |
 |      Room      |          Join          | Join room                         |
@@ -137,6 +141,24 @@ Types which don't have ID:
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
+
+#### User
+```json5
+{
+   "id": 1, // User id
+   "username": "Username",
+   "avatar": "Avatar url or file id or null",
+}
+```
+#### Room
+```json5
+{
+   "id": 1, // Room id
+   "name": "Room name",
+   "allUsers": [User, User, User], // All users in room
+}
+```
+
 #### Client
 ##### Handshake
 ```json5
@@ -260,6 +282,29 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
 ```json5
 {
    "type": "User.Delete.ID",
+   "data": {
+      "username": "Username"
+   }
+}
+```
+
+#### User.Update
+```json5
+{
+   "type": "User.Update.ID",
+   "data": {
+      // If value is null, then it will not be updated
+      "username": "Username or null",
+      "password": "Password or null",
+      "avatar": "Avatar url or file id or null",
+   }
+}
+```
+
+#### User.GetInfo
+```json5
+{
+   "type": "User.GetInfo.ID",
    "data": {
       "username": "Username"
    }
@@ -433,6 +478,29 @@ Here described objects for Major.Minor types. (if minor type is not specified, t
    "type": "User.Deleted.ID",
    "data": {
       "username": "Username"
+   }
+}
+```
+##### User.Updated
+```json5
+{
+   "type": "User.Updated.ID",
+   "data": {
+      // If value is null, then it will not be updated
+      "id": "User id",
+      "username": "Username or null",
+      "avatar": "Avatar url or file id or null"
+   }
+}
+```
+##### User.Info
+```json5
+{
+   "type": "User.Info.ID",
+   "data": {
+      "id": "User id",
+      "username": "Username",
+      "avatar": "Avatar url or file id"
    }
 }
 ```
