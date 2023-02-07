@@ -138,6 +138,12 @@ Server will respond with the same id.
 If server cannot parse the packet, ID **MUST** be DontHaveID.
 Types which don't have ID:
 - Error.HeartbeatTimeout
+- Room.Updated
+- Room.Deleted
+- Room.Left
+- Room.Joined
+- Message.TextMessage
+- Message.ImageMessage
 
 ### Objects
 Here described objects for Major.Minor types. (if minor type is not specified, then object is for all minor types)
